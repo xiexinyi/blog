@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.prose-invert a {
+  @apply text-sky-400 underline decoration-sky-400/40 underline-offset-4 hover:text-sky-300;
+}
+
