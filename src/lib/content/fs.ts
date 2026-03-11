@@ -46,7 +46,9 @@ function normalizeFrontmatter<T extends BaseFrontmatter>(fm: T): T {
 export function loadCollection<T extends BaseFrontmatter = BaseFrontmatter>(
   type: ContentType
 ): ContentItem<T>[] {
-  const dir = path.join(CONTENT_ROOT, `${type === "page" ? "pages" : `${type}s`}`);
+  const folder =
+    type === "post" ? "blog" : type === "page" ? "pages" : type === "project" ? "projects" : "";
+  const dir = path.join(CONTENT_ROOT, folder);
   const files = listMarkdownFiles(dir);
 
   const items: ContentItem<T>[] = files.map((file) => {
