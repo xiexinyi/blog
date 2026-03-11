@@ -1,4 +1,4 @@
-export type ContentType = "post" | "page" | "project";
+export type ContentType = "post" | "page" | "project" | "grandpa";
 
 export type BaseFrontmatter = {
   type: ContentType;

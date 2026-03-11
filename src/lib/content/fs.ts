@@ -47,7 +47,15 @@ export function loadCollection<T extends BaseFrontmatter = BaseFrontmatter>(
   type: ContentType
 ): ContentItem<T>[] {
   const folder =
-    type === "post" ? "blog" : type === "page" ? "pages" : type === "project" ? "projects" : "";
+    type === "post"
+      ? "blog"
+      : type === "page"
+        ? "pages"
+        : type === "project"
+          ? "projects"
+          : type === "grandpa"
+            ? "grandpa"
+            : "";
   const dir = path.join(CONTENT_ROOT, folder);
   const files = listMarkdownFiles(dir);
 

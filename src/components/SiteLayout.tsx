@@ -18,6 +18,9 @@ export function SiteLayout({ children }: PropsWithChildren) {
           <Link href="/blog" className="hover:text-white">
             博客
           </Link>
+          <Link href="/grandpa" className="hover:text-white">
+            爷爷的文章
+          </Link>
           <Link href="/projects" className="hover:text-white">
             项目
           </Link>

@@ -12,6 +12,7 @@ type Item = {
 type Props = {
   posts: Item[];
   projects: Item[];
+  grandpa: Item[];
 };
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
@@ -35,10 +36,19 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       tags: p.frontmatter.tags
     }));
 
-  return { props: { posts, projects } };
+  const grandpa = loadCollection("grandpa")
+    .slice(0, 3)
+    .map((p) => ({
+      slug: p.slug,
+      title: p.frontmatter.title,
+      date: p.frontmatter.date,
+      tags: p.frontmatter.tags
+    }));
+
+  return { props: { posts, projects, grandpa } };
 };
 
-export default function HomePage({ posts, projects }: Props) {
+export default function HomePage({ posts, projects, grandpa }: Props) {
   return (
     <SiteLayout>
       <div className="space-y-12">
@@ -61,6 +71,25 @@ export default function HomePage({ posts, projects }: Props) {
             {posts.map((p) => (
               <li key={p.slug} className="rounded-lg border border-zinc-800 p-4">
                 <Link href={`/blog/${p.slug}`} className="hover:underline">
+                  <div className="text-base font-medium">{p.title}</div>
+                </Link>
+                <div className="mt-1 text-sm text-zinc-400">{p.date}</div>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section className="space-y-4">
+          <div className="flex items-baseline justify-between">
+            <h3 className="text-lg font-semibold">爷爷的文章</h3>
+            <Link className="text-sm text-zinc-300 hover:text-white" href="/grandpa">
+              查看全部 →
+            </Link>
+          </div>
+          <ul className="space-y-3">
+            {grandpa.map((p) => (
+              <li key={p.slug} className="rounded-lg border border-zinc-800 p-4">
+                <Link href={`/grandpa/${p.slug}`} className="hover:underline">
                   <div className="text-base font-medium">{p.title}</div>
                 </Link>
                 <div className="mt-1 text-sm text-zinc-400">{p.date}</div>
