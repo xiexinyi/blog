@@ -5,6 +5,47 @@ import { format } from "date-fns";
 import { ContentItem, BaseFrontmatter, ContentType } from "./types";
 
 const CONTENT_ROOT = path.join(process.cwd(), "content");
+const GRANDPA_SECTIONS_META = path.join(CONTENT_ROOT, "grandpa", "sections.json");
+
+type GrandpaSectionMeta = {
+  folder: string; // actual folder name under content/grandpa/
+  slug: string; // URL-safe section slug (English)
+  title: string; // display title (e.g. Chinese)
+};
+
+let grandpaSectionCache:
+  | { byFolder: Map<string, GrandpaSectionMeta>; bySlug: Map<string, GrandpaSectionMeta> }
+  | null = null;
+
+function loadGrandpaSectionMeta() {
+  if (grandpaSectionCache) return grandpaSectionCache;
+
+  const byFolder = new Map<string, GrandpaSectionMeta>();
+  const bySlug = new Map<string, GrandpaSectionMeta>();
+
+  if (fs.existsSync(GRANDPA_SECTIONS_META)) {
+    const raw = fs.readFileSync(GRANDPA_SECTIONS_META, "utf8");
+    const parsed = JSON.parse(raw) as GrandpaSectionMeta[];
+    for (const m of parsed) {
+      if (!m?.folder || !m?.slug || !m?.title) continue;
+      byFolder.set(m.folder, m);
+      bySlug.set(m.slug, m);
+    }
+  }
+
+  grandpaSectionCache = { byFolder, bySlug };
+  return grandpaSectionCache;
+}
+
+export function getGrandpaSectionDisplayTitle(sectionSlug: string) {
+  const meta = loadGrandpaSectionMeta().bySlug.get(sectionSlug);
+  return meta?.title ?? sectionSlug;
+}
+
+export function listGrandpaSections() {
+  const meta = loadGrandpaSectionMeta();
+  return Array.from(meta.bySlug.values()).sort((a, b) => a.slug.localeCompare(b.slug));
+}
 
 function assertWithinContentRoot(p: string) {
   const normalized = path.normalize(p);
@@ -29,6 +70,10 @@ function listMarkdownFiles(dir: string): string[] {
 
 function slugFromFilename(filePath: string) {
   return path.basename(filePath).replace(/\.md$/i, "");
+}
+
+function slugFromRelativePath(relativePath: string) {
+  return relativePath.replace(/\.md$/i, "").split(path.sep).join("/");
 }
 
 function normalizeFrontmatter<T extends BaseFrontmatter>(fm: T): T {
@@ -64,7 +109,16 @@ export function loadCollection<T extends BaseFrontmatter = BaseFrontmatter>(
     const parsed = matter(raw);
     const frontmatter = normalizeFrontmatter(parsed.data as T);
 
-    const slug = (frontmatter.slug && String(frontmatter.slug)) || slugFromFilename(file);
+    const slug =
+      type === "grandpa"
+        ? (() => {
+            const rel = slugFromRelativePath(path.relative(dir, file));
+            const [sectionFolder, ...rest] = rel.split("/");
+            if (!sectionFolder) return rel;
+            const mapped = loadGrandpaSectionMeta().byFolder.get(sectionFolder)?.slug ?? sectionFolder;
+            return [mapped, ...rest].join("/");
+          })()
+        : (frontmatter.slug && String(frontmatter.slug)) || slugFromFilename(file);
     return {
       frontmatter,
       slug,

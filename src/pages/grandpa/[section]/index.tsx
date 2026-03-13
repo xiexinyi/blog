@@ -1,0 +1,84 @@
+import type { GetStaticPaths, GetStaticProps } from "next";
+import Link from "next/link";
+import { SiteLayout } from "@/components/SiteLayout";
+
+type ArticleItem = {
+  section: string;
+  slug: string;
+  title: string;
+  date?: string;
+  tags?: string[];
+};
+
+type Props = {
+  section: string;
+  sectionTitle: string;
+  articles: ArticleItem[];
+};
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const { loadCollection } = await import("@/lib/content/fs");
+  const sections = Array.from(
+    new Set(loadCollection("grandpa").map((p) => p.slug.split("/")[0]).filter(Boolean))
+  );
+  return {
+    paths: sections.map((section) => ({ params: { section } })),
+    fallback: false
+  };
+};
+
+export const getStaticProps: GetStaticProps<Props> = async (ctx) => {
+  const { loadCollection, getGrandpaSectionDisplayTitle } = await import("@/lib/content/fs");
+  const section = String(ctx.params?.section || "");
+  const sectionTitle = getGrandpaSectionDisplayTitle(section);
+
+  const articles = loadCollection("grandpa")
+    .filter((p) => p.slug.startsWith(`${section}/`))
+    .map((p) => {
+      const [, ...rest] = p.slug.split("/");
+      return {
+        section,
+        slug: rest.join("/"),
+        title: p.frontmatter.title,
+        date: p.frontmatter.date,
+        tags: p.frontmatter.tags
+      };
+    })
+    .filter((p) => p.slug.length > 0);
+
+  return { props: { section, sectionTitle, articles } };
+};
+
+export default function GrandpaSectionIndexPage({ section, sectionTitle, articles }: Props) {
+  return (
+    <SiteLayout>
+      <div className="space-y-6">
+        <header className="space-y-2">
+          <h2 className="text-2xl font-semibold tracking-tight">{sectionTitle}</h2>
+          <p className="text-sm text-zinc-400">目录</p>
+        </header>
+
+        <ul className="space-y-3">
+          {articles.map((p) => (
+            <li key={`${p.section}/${p.slug}`} className="rounded-lg border border-zinc-800 p-4">
+              <Link href={`/grandpa/${encodeURIComponent(p.section)}/${p.slug}`} className="hover:underline">
+                <div className="text-base font-medium">{p.title}</div>
+              </Link>
+              <div className="mt-1 text-sm text-zinc-400">{p.date}</div>
+              {p.tags?.length ? (
+                <div className="mt-2 flex flex-wrap gap-2 text-xs text-zinc-400">
+                  {p.tags.map((t) => (
+                    <span key={t} className="rounded-full border border-zinc-800 px-2 py-0.5">
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              ) : null}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </SiteLayout>
+  );
+}
+

@@ -10,15 +10,25 @@ type Props = {
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const { loadCollection } = await import("@/lib/content/fs");
-  const paths = loadCollection("grandpa").map((p) => ({ params: { slug: p.slug } }));
+  const paths = loadCollection("grandpa")
+    .map((p) => {
+      const [section, ...rest] = p.slug.split("/");
+      const slug = rest.join("/");
+      if (!section || !slug) return null;
+      return { params: { section, slug } };
+    })
+    .filter(Boolean) as Array<{ params: { section: string; slug: string } }>;
+
   return { paths, fallback: false };
 };
 
 export const getStaticProps: GetStaticProps<Props> = async (ctx) => {
   const { loadBySlug } = await import("@/lib/content/fs");
   const { markdownToHtml } = await import("@/lib/content/markdown");
+
+  const section = String(ctx.params?.section || "");
   const slug = String(ctx.params?.slug || "");
-  const post = loadBySlug("grandpa", slug);
+  const post = loadBySlug("grandpa", `${section}/${slug}`);
   if (!post) return { notFound: true };
 
   const html = await markdownToHtml(post.body);
