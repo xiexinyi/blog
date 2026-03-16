@@ -3,18 +3,21 @@ import Link from "next/link";
 import { SiteLayout } from "@/components/SiteLayout";
 
 type Props = {
-  sections: Array<{ slug: string; title: string }>;
+  sections: Array<{ slug: string; title: string; author?: string | null }>;
 };
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
-  const { loadCollection, getGrandpaSectionDisplayTitle } = await import("@/lib/content/fs");
+  const { loadCollection, getGrandpaSectionDisplayTitle, getGrandpaSectionMeta } = await import(
+    "@/lib/content/fs"
+  );
   const sectionSlugs = Array.from(
     new Set(loadCollection("grandpa").map((p) => p.slug.split("/")[0]).filter(Boolean))
   ).sort((a, b) => a.localeCompare(b));
 
   const sections = sectionSlugs.map((slug) => ({
     slug,
-    title: getGrandpaSectionDisplayTitle(slug)
+    title: getGrandpaSectionDisplayTitle(slug),
+    author: getGrandpaSectionMeta(slug)?.author ?? null
   }));
   return { props: { sections } };
 };
@@ -36,6 +39,7 @@ export default function GrandpaIndexPage({ sections }: Props) {
               <Link href={`/grandpa/${encodeURIComponent(s.slug)}`} className="hover:underline">
                 <div className="text-base font-medium">{s.title}</div>
               </Link>
+              {s.author ? <div className="mt-1 text-sm text-zinc-400">作者：{s.author}</div> : null}
               <div className="mt-1 text-sm text-zinc-400">点击进入目录</div>
             </li>
           ))}

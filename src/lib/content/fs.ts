@@ -11,6 +11,7 @@ type GrandpaSectionMeta = {
   folder: string; // actual folder name under content/grandpa/
   slug: string; // URL-safe section slug (English)
   title: string; // display title (e.g. Chinese)
+  author?: string; // display author line (optional)
 };
 
 let grandpaSectionCache:
@@ -45,6 +46,10 @@ export function getGrandpaSectionDisplayTitle(sectionSlug: string) {
 export function listGrandpaSections() {
   const meta = loadGrandpaSectionMeta();
   return Array.from(meta.bySlug.values()).sort((a, b) => a.slug.localeCompare(b.slug));
+}
+
+export function getGrandpaSectionMeta(sectionSlug: string) {
+  return loadGrandpaSectionMeta().bySlug.get(sectionSlug) ?? null;
 }
 
 function assertWithinContentRoot(p: string) {
