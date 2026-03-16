@@ -35,22 +35,31 @@ export default function ProjectsIndexPage({ projects }: Props) {
 
         <ul className="grid gap-3 sm:grid-cols-2">
           {projects.map((p) => (
-            <li key={p.slug} className="rounded-lg border border-zinc-800 p-4">
-              <Link href={`/projects/${p.slug}`} className="hover:underline">
-                <div className="text-base font-medium">{p.title}</div>
+            <li
+              key={p.slug}
+              className="relative rounded-lg border border-zinc-800 p-4 hover:bg-zinc-900/30"
+            >
+              <Link
+                href={`/projects/${p.slug}`}
+                className="absolute inset-0 z-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-zinc-500"
+              >
+                <span className="sr-only">{p.title}</span>
               </Link>
+              <div className="relative">
+                <div className="text-base font-medium">{p.title}</div>
+              </div>
               {p.link ? (
                 <a
                   href={p.link}
                   target="_blank"
                   rel="noreferrer"
-                  className="mt-2 block text-sm text-sky-400 hover:text-sky-300"
+                  className="relative z-20 mt-2 block text-sm text-sky-400 hover:text-sky-300"
                 >
                   外部链接 →
                 </a>
               ) : null}
               {p.tags?.length ? (
-                <div className="mt-2 flex flex-wrap gap-2 text-xs text-zinc-400">
+                <div className="relative z-20 mt-2 flex flex-wrap gap-2 text-xs text-zinc-400">
                   {p.tags.map((t) => (
                     <span
                       key={t}

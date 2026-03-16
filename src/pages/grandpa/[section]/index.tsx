@@ -78,26 +78,32 @@ export default function GrandpaSectionIndexPage({
 
         <ul className="space-y-3">
           {articles.map((p) => (
-            <li key={`${p.section}/${p.slug}`} className="rounded-lg border border-zinc-800 p-4">
+            <li
+              key={`${p.section}/${p.slug}`}
+              className="relative rounded-lg border border-zinc-800 p-4 hover:bg-zinc-900/30"
+            >
               <Link
                 href={`/grandpa/${encodeURIComponent(p.section)}/${p.slug
                   .split("/")
                   .map((seg) => encodeURIComponent(seg))
                   .join("/")}`}
-                className="hover:underline"
+                className="absolute inset-0 z-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-zinc-500"
               >
-                <div className="text-base font-medium">{p.title}</div>
+                <span className="sr-only">{p.title}</span>
               </Link>
-              <div className="mt-1 text-sm text-zinc-400">{p.date}</div>
-              {p.tags?.length ? (
-                <div className="mt-2 flex flex-wrap gap-2 text-xs text-zinc-400">
-                  {p.tags.map((t) => (
-                    <span key={t} className="rounded-full border border-zinc-800 px-2 py-0.5">
-                      {t}
-                    </span>
-                  ))}
-                </div>
-              ) : null}
+              <div className="relative">
+                <div className="text-base font-medium">{p.title}</div>
+                <div className="mt-1 text-sm text-zinc-400">{p.date}</div>
+                {p.tags?.length ? (
+                  <div className="mt-2 flex flex-wrap gap-2 text-xs text-zinc-400">
+                    {p.tags.map((t) => (
+                      <span key={t} className="rounded-full border border-zinc-800 px-2 py-0.5">
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                ) : null}
+              </div>
             </li>
           ))}
         </ul>

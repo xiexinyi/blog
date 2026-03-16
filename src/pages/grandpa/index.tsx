@@ -35,10 +35,19 @@ export default function GrandpaIndexPage({ sections }: Props) {
 
         <ul className="space-y-3">
           {sections.map((s) => (
-            <li key={s.slug} className="rounded-lg border border-zinc-800 p-4">
-              <Link href={`/grandpa/${encodeURIComponent(s.slug)}`} className="hover:underline">
-                <div className="text-base font-medium">{s.title}</div>
+            <li
+              key={s.slug}
+              className="relative rounded-lg border border-zinc-800 p-4 hover:bg-zinc-900/30"
+            >
+              <Link
+                href={`/grandpa/${encodeURIComponent(s.slug)}`}
+                className="absolute inset-0 z-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-zinc-500"
+              >
+                <span className="sr-only">{s.title}</span>
               </Link>
+              <div className="relative">
+                <div className="text-base font-medium">{s.title}</div>
+              </div>
               {s.author ? <div className="mt-1 text-sm text-zinc-400">作者：{s.author}</div> : null}
             </li>
           ))}
