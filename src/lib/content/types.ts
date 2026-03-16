@@ -5,6 +5,7 @@ export type BaseFrontmatter = {
   title: string;
   slug?: string;
   date?: string;
+  order?: number;
   tags?: string[];
   draft?: boolean;
   link?: string;

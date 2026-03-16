@@ -7,6 +7,7 @@ type ArticleItem = {
   slug: string;
   title: string;
   date?: string;
+  order: number | null;
   tags?: string[];
 };
 
@@ -41,10 +42,18 @@ export const getStaticProps: GetStaticProps<Props> = async (ctx) => {
         slug: rest.join("/"),
         title: p.frontmatter.title,
         date: p.frontmatter.date,
+        order: typeof p.frontmatter.order === "number" ? p.frontmatter.order : null,
         tags: p.frontmatter.tags
       };
     })
     .filter((p) => p.slug.length > 0);
+
+  articles.sort((a, b) => {
+    const ao = a.order ?? Number.POSITIVE_INFINITY;
+    const bo = b.order ?? Number.POSITIVE_INFINITY;
+    if (ao !== bo) return ao - bo;
+    return (b.date || "").localeCompare(a.date || "");
+  });
 
   return { props: { section, sectionTitle, articles } };
 };
@@ -61,7 +70,13 @@ export default function GrandpaSectionIndexPage({ section, sectionTitle, article
         <ul className="space-y-3">
           {articles.map((p) => (
             <li key={`${p.section}/${p.slug}`} className="rounded-lg border border-zinc-800 p-4">
-              <Link href={`/grandpa/${encodeURIComponent(p.section)}/${p.slug}`} className="hover:underline">
+              <Link
+                href={`/grandpa/${encodeURIComponent(p.section)}/${p.slug
+                  .split("/")
+                  .map((seg) => encodeURIComponent(seg))
+                  .join("/")}`}
+                className="hover:underline"
+              >
                 <div className="text-base font-medium">{p.title}</div>
               </Link>
               <div className="mt-1 text-sm text-zinc-400">{p.date}</div>
