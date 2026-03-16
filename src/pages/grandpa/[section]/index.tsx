@@ -14,6 +14,7 @@ type ArticleItem = {
 type Props = {
   section: string;
   sectionTitle: string;
+  sectionAuthor: string | null;
   articles: ArticleItem[];
 };
 
@@ -29,9 +30,12 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 export const getStaticProps: GetStaticProps<Props> = async (ctx) => {
-  const { loadCollection, getGrandpaSectionDisplayTitle } = await import("@/lib/content/fs");
+  const { loadCollection, getGrandpaSectionDisplayTitle, getGrandpaSectionMeta } = await import(
+    "@/lib/content/fs"
+  );
   const section = String(ctx.params?.section || "");
   const sectionTitle = getGrandpaSectionDisplayTitle(section);
+  const sectionAuthor = getGrandpaSectionMeta(section)?.author ?? null;
 
   const articles = loadCollection("grandpa")
     .filter((p) => p.slug.startsWith(`${section}/`))
@@ -55,16 +59,21 @@ export const getStaticProps: GetStaticProps<Props> = async (ctx) => {
     return (b.date || "").localeCompare(a.date || "");
   });
 
-  return { props: { section, sectionTitle, articles } };
+  return { props: { section, sectionTitle, sectionAuthor, articles } };
 };
 
-export default function GrandpaSectionIndexPage({ section, sectionTitle, articles }: Props) {
+export default function GrandpaSectionIndexPage({
+  section,
+  sectionTitle,
+  sectionAuthor,
+  articles
+}: Props) {
   return (
     <SiteLayout>
       <div className="space-y-6">
         <header className="space-y-2">
           <h2 className="text-2xl font-semibold tracking-tight">{sectionTitle}</h2>
-          <p className="text-sm text-zinc-400">目录</p>
+          {sectionAuthor ? <div className="text-sm text-zinc-400">作者：{sectionAuthor}</div> : null}
         </header>
 
         <ul className="space-y-3">

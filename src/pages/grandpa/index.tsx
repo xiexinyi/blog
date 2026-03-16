@@ -40,7 +40,6 @@ export default function GrandpaIndexPage({ sections }: Props) {
                 <div className="text-base font-medium">{s.title}</div>
               </Link>
               {s.author ? <div className="mt-1 text-sm text-zinc-400">作者：{s.author}</div> : null}
-              <div className="mt-1 text-sm text-zinc-400">点击进入目录</div>
             </li>
           ))}
         </ul>
