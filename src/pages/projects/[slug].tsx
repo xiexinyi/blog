@@ -38,7 +38,7 @@ export default function ProjectPage({ title, link, html }: Props) {
       <Head>
         <title>{title}</title>
       </Head>
-      <article className="prose prose-invert max-w-none">
+      <article className="prose prose-slate max-w-none">
         <header className="not-prose mb-8 space-y-2">
           <h2 className="text-3xl font-semibold tracking-tight">{title}</h2>
           {link ? (
@@ -46,7 +46,7 @@ export default function ProjectPage({ title, link, html }: Props) {
               href={link}
               target="_blank"
               rel="noreferrer"
-              className="text-sm text-sky-400 hover:text-sky-300"
+              className="text-sm text-emerald-700 hover:text-emerald-800"
             >
               {link}
             </a>

@@ -2,7 +2,44 @@
 @tailwind components;
 @tailwind utilities;
 
-.prose-invert a {
-  @apply text-sky-400 underline decoration-sky-400/40 underline-offset-4 hover:text-sky-300;
+@layer base {
+  html {
+    /* Blue base (clearly blue, still soft) */
+    @apply bg-[#d7eaff] text-slate-900 antialiased;
+  }
+  body {
+    @apply min-h-screen;
+  }
+}
+
+@layer components {
+  .page-bg {
+    @apply relative;
+  }
+  .page-bg::before {
+    content: "";
+    @apply pointer-events-none absolute inset-0 -z-10;
+    background:
+      /* Base wash (adds depth, avoids flatness) */
+      linear-gradient(180deg, rgba(215, 234, 255, 0.96), rgba(236, 245, 255, 0.92)),
+      linear-gradient(135deg, rgba(37, 99, 235, 0.10), rgba(34, 211, 238, 0.08) 45%, rgba(59, 130, 246, 0.08)),
+      /* Calming glow layers */
+      radial-gradient(1100px circle at 10% 8%, rgba(37, 99, 235, 0.30), transparent 60%),
+      radial-gradient(1200px circle at 92% 12%, rgba(34, 211, 238, 0.24), transparent 64%),
+      radial-gradient(1300px circle at 55% 110%, rgba(59, 130, 246, 0.22), transparent 62%),
+      /* Edge vignette for “premium” depth */
+      radial-gradient(1200px circle at 50% 40%, transparent 55%, rgba(2, 6, 23, 0.10) 100%),
+      /* Fine texture (two-frequency grid, very subtle) */
+      linear-gradient(rgba(2, 6, 23, 0.028) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(2, 6, 23, 0.028) 1px, transparent 1px),
+      linear-gradient(rgba(2, 6, 23, 0.018) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(2, 6, 23, 0.018) 1px, transparent 1px);
+    background-size: auto, auto, auto, auto, auto, auto, 56px 56px, 56px 56px, 14px 14px, 14px 14px;
+    background-position: 0 0, 0 0, 0 0, 0 0, 0 0, center, -2px -2px, -2px -2px, -1px -1px, -1px -1px;
+  }
+}
+
+.prose a {
+  @apply text-emerald-700 underline decoration-emerald-400/60 underline-offset-4 hover:text-emerald-800;
 }
 

@@ -29,7 +29,7 @@ export default function AboutPage({ title, html }: Props) {
       <Head>
         <title>{title}</title>
       </Head>
-      <article className="prose prose-invert max-w-none">
+      <article className="prose prose-slate max-w-none">
         <h2>{title}</h2>
         <div dangerouslySetInnerHTML={{ __html: html }} />
       </article>

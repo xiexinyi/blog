@@ -28,7 +28,7 @@ export default function GrandpaIndexPage({ sections }: Props) {
       <div className="space-y-6">
         <header className="space-y-2">
           <h2 className="text-2xl font-semibold tracking-tight">爷爷的文章</h2>
-          <p className="text-sm text-zinc-400">
+          <p className="text-sm text-slate-600">
             板块来自 `content/grandpa/&lt;板块名&gt;/`。
           </p>
         </header>
@@ -37,18 +37,29 @@ export default function GrandpaIndexPage({ sections }: Props) {
           {sections.map((s) => (
             <li
               key={s.slug}
-              className="relative rounded-lg border border-zinc-800 p-4 hover:bg-zinc-900/30"
+              className="group relative overflow-hidden rounded-xl border border-emerald-900/10 bg-white/60 p-4 shadow-sm transition hover:border-emerald-900/15 hover:bg-white/80"
             >
+              <div className="pointer-events-none absolute inset-0 opacity-0 transition group-hover:opacity-100">
+                <div className="absolute -inset-px rounded-xl bg-gradient-to-r from-emerald-400/30 via-cyan-300/15 to-blue-400/25" />
+                <div className="absolute inset-0 bg-gradient-to-br from-emerald-200/20 via-transparent to-transparent" />
+              </div>
               <Link
                 href={`/grandpa/${encodeURIComponent(s.slug)}`}
-                className="absolute inset-0 z-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-zinc-500"
+                className="absolute inset-0 z-10 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-400/40"
               >
                 <span className="sr-only">{s.title}</span>
               </Link>
               <div className="relative">
-                <div className="text-base font-medium">{s.title}</div>
+                <div className="flex items-start justify-between gap-4">
+                  <div className="min-w-0">
+                    <div className="truncate text-base font-medium tracking-tight">{s.title}</div>
+                    {s.author ? (
+                      <div className="mt-1 text-sm text-slate-600">作者：{s.author}</div>
+                    ) : null}
+                  </div>
+                  <div className="mt-0.5 text-slate-400 transition group-hover:text-slate-700">→</div>
+                </div>
               </div>
-              {s.author ? <div className="mt-1 text-sm text-zinc-400">作者：{s.author}</div> : null}
             </li>
           ))}
         </ul>

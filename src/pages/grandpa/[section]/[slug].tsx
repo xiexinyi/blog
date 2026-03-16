@@ -48,10 +48,10 @@ export default function GrandpaArticlePage({ title, date, html }: Props) {
       <Head>
         <title>{title}</title>
       </Head>
-      <article className="prose prose-invert max-w-none">
+      <article className="prose prose-slate max-w-none">
         <header className="not-prose mb-8 space-y-2">
           <h2 className="text-3xl font-semibold tracking-tight">{title}</h2>
-          <div className="text-sm text-zinc-400">{date}</div>
+          <div className="text-sm text-slate-600">{date}</div>
         </header>
         <div dangerouslySetInnerHTML={{ __html: html }} />
       </article>
